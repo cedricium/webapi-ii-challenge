@@ -42,4 +42,27 @@ postsRouter.post('/', async (req, res) => {
   }
 })
 
+postsRouter.get('/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    const post = (await db.findById(id))[0]
+    if (!post) {
+      res.status(404).json({
+        success: false,
+        error: `The post with the specified ID does not exist`
+      })
+    } else {
+      res.status(200).json({
+        success: true,
+        post
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: `The posts information could not be retrieved`
+    })
+  }
+})
+
 module.exports = postsRouter
