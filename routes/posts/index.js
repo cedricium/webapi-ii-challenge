@@ -1,5 +1,8 @@
 const postsRouter = require('express').Router()
+const commentsRouter = require('../comments')
 const db = require('../../data/db')
+
+postsRouter.use('/:id/comments', commentsRouter)
 
 postsRouter.get('/', async (req, res) => {
   try {
@@ -26,7 +29,7 @@ postsRouter.post('/', async (req, res) => {
   }
   try {
     const { id } = await db.insert({ title, contents })
-    const post = await db.findById(id)
+    const post = (await db.findById(id))[0]
     res.status(201).json({
       success: true,
       post
