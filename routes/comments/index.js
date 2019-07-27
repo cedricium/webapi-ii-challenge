@@ -7,6 +7,30 @@
 const commentsRouter = require('express').Router({ mergeParams: true })
 const db = require('../../data/db')
 
+commentsRouter.get('/', async (req, res) => {
+  const postId = req.params.id
+  try {
+    const post = (await db.findById(postId))[0]
+    if (!post) {
+      res.status(404).json({
+        success: false,
+        error: `The post with the specified ID does not exist`
+      })
+    } else {
+      const comments = await db.findPostComments(postId)
+      res.status(200).json({
+        success: true,
+        comments
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: `The comments information could not be retrieved`
+    })
+  }
+})
+
 commentsRouter.post('/', async (req, res) => {
   const postId = req.params.id
   const { text } = req.body
